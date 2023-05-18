@@ -34,7 +34,8 @@ function App() {
 
     return (
         <>
-            <Drawer position="top"
+            <Drawer
+                position="left"
                     size="lg"
                     opened={opened}
                     onClose={close}
