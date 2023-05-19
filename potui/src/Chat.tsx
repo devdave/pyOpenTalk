@@ -1,5 +1,6 @@
 import React from "react";
 
+import {Group} from "@mantine/core";
 import {MessageObject} from "./types.ts";
 interface chatProps {
     message: string,
@@ -30,15 +31,14 @@ export const Chat: React.FC<chatProps> = ({message, setMessage, chatHistory, sen
 
     return (
     <>
-        <div className="output">
+        <Group position="left">
             {chatHistory.map((msg, index) => (
                 <div key={index}>{msg.sender} says {msg.text}</div>
             ))}
-        </div>
-        <div className="control">
+        </Group>
+        <Group className="control">
             <form onSubmit={handleSubmit}>
                 <div className="promptBar">
-                    <label>Prompt</label>
                     <textarea id="textInput"
                               rows={2}
                               placeholder="Send a message."
@@ -46,10 +46,9 @@ export const Chat: React.FC<chatProps> = ({message, setMessage, chatHistory, sen
                               onKeyDown={watchForEnter}
                               value={message}
                     />
-                    <button>Submit</button>
                 </div>
             </form>
-        </div>
+        </Group>
     </>
   )
 }

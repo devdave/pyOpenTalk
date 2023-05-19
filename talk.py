@@ -1,6 +1,9 @@
 import argparse
 import webview
 import keyring
+from pathlib import Path
+import subprocess
+import time
 
 class TalkApplication:
     IDENTIFIER = "PY_OPEN_TALK"
@@ -41,17 +44,43 @@ class AppAPI:
         print(f"Remote gave me: {config}")
 
 
+def spinup_pnpm():
+    ui_dir = Path(__file__).parent / "potui"
+    process = subprocess.Popen(["pnpm", "dev", "--port", "8080"], cwd=str(ui_dir))
+
+    status = process.poll()
+    if status is not None:
+        raise Exception(f"pnpm failed to run {status}")
+
+    time.sleep(2)
+
+    return process
+
+
+
 def main():
     args = argparse.ArgumentParser("OpenAI API talker")
 
     args.add_argument("--url", type=str, default=None)
+    args.add_argument("--dev", action="store_true", default=False)
 
     result = args.parse_args()
+    app = TalkApplication()
+    api = AppAPI(app)
 
+    worker = None
 
-    api = AppAPI()
-    win1 = webview.create_window("PyOpen Talk", url=result.url, js_api=api)
+    if result.dev is True:
+        worker = spinup_pnpm()
+        win1 = webview.create_window("PyOpen Talk", url="http://127.0.0.1:8080", js_api=api)
+    else:
+        win1 = webview.create_window("PyOpen Talk", url=result.url, js_api=api)
+
     webview.start(debug=True)
+
+    if worker is not None:
+        worker.kill()
+        time.sleep(2)
 
 
 

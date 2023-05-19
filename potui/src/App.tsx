@@ -50,7 +50,7 @@ function App() {
                 <Flex mih={50}
                       gap="md"
                       justify="flex-start"
-                      align="flex-start"
+                      align="center"
                       direction="column"
                 >
                     <Chat
