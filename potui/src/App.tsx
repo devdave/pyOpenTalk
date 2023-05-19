@@ -2,12 +2,13 @@ import './App.css'
 
 import {Boundary} from "./lib/boundary.ts";
 import {useState} from "react";
-import {Button, Drawer} from "@mantine/core";
+import {Button, Drawer, Flex, Group, Modal} from "@mantine/core";
 
 import {MessageObject} from "./types.ts";
 import {Chat} from "./Chat.tsx";
 import {useDisclosure} from "@mantine/hooks";
 import {ConfigForm} from "./ConfigForm.tsx";
+import {GridProvider} from "@mantine/core/lib/Grid/Grid.context";
 
 
 
@@ -34,25 +35,30 @@ function App() {
 
     return (
         <>
-            <Drawer
-                position="left"
+            <Modal
                     size="lg"
                     opened={opened}
                     onClose={close}
                     title="Settings"
                     overlayProps={{opacity: 0.5, blur: 4}}>
                 <ConfigForm boundary={boundary}/>
-            </Drawer>
-            <div>
+            </Modal>
+            <Flex mih={50}
+                  gap="md"
+                  justify="flex-start"
+                  align="flex-start"
+                  direction="column"
+            >
                 <Chat
                     sendMessage={sendMessage}
                     message={message}
                     setMessage={setMessage}
                     chatHistory={chatHistory}
                 />
-                <Button onClick={open}>Settings</Button>
-            </div>
-
+                <Group position="center">
+                        <Button onClick={open}>Settings</Button>
+                </Group>
+            </Flex>
         </>
     )
 
