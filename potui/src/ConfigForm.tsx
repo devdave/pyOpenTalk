@@ -20,7 +20,7 @@ export const ConfigForm: React.FC<ConfigFormProperties> = ({boundary}) => {
     }
 
     return (
-        <div style={{minWidth:"25vw"}}>
+        <>
             <form onSubmit={onSubmit}>
                 <TextInput
                     withAsterisk
@@ -30,7 +30,7 @@ export const ConfigForm: React.FC<ConfigFormProperties> = ({boundary}) => {
                 />
                 <Button type="submit">Submit</Button>
             </form>
-        </div>
+        </>
     )
 
 }
