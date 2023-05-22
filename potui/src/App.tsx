@@ -1,11 +1,12 @@
 import './App.css'
 
 import {Boundary} from "./lib/boundary.ts";
-import {useState} from "react";
-import {Button, Flex, Group, Modal} from "@mantine/core";
+import React, {useState} from "react";
+import {AppShell, Button, Loader, Header, Footer, Group, Modal, Paper, ScrollArea} from "@mantine/core";
+
 
 import {MessageObject} from "./types.ts";
-import {Chat} from "./Chat.tsx";
+
 import {useDisclosure} from "@mantine/hooks";
 import {ConfigForm} from "./ConfigForm.tsx";
 
@@ -29,7 +30,46 @@ function App() {
 
         setMessage("");
     }
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        sendMessage();
+        setMessage("");
+    }
 
+    const watchForEnter = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (event.keyCode == 13 && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+            setMessage("");
+        }
+    }
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setMessage(event.target.value);
+    }
+
+
+    const footerContent = (
+        <>
+            <Group position="center">
+
+                <form onSubmit={handleSubmit}>
+                    <div className="promptBar">
+                    <textarea id="textInput"
+                              rows={2}
+                              placeholder="Send a message."
+                              onChange={handleInputChange}
+                              onKeyDown={watchForEnter}
+                              value={message}
+                    />
+                    </div>
+                </form>
+
+            </Group>
+            <Group position="center"><Button onClick={open}>Settings</Button></Group>
+
+        </>
+    )
 
     return (
         <>
@@ -41,29 +81,34 @@ function App() {
                 title="Settings"
                 overlayProps={{opacity: 0.5, blur: 4}}
 
-                >
+            >
                 <ConfigForm boundary={boundary}/>
             </Modal>
 
-            <Group position="left">
-
-                <Flex mih={50}
-                      gap="md"
-                      justify="flex-start"
-                      align="center"
-                      direction="column"
-                >
-                    <Chat
-                        sendMessage={sendMessage}
-                        message={message}
-                        setMessage={setMessage}
-                        chatHistory={chatHistory}
-                    />
-                    <Group position="center">
-                        <Button onClick={open}>Settings</Button>
+            <AppShell
+                padding="md"
+                header={<Header height={60} p="xs">Py Open Talk</Header>}
+                footer={<Footer height="auto" p="xs">{footerContent}</Footer>}
+                styles={(theme) => ({
+                    main: {backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]},
+                })}
+            >
+                <ScrollArea type="auto" h="auto">
+                    <Group position="left" style={{flexDirection: "column"}}>
+                        {chatHistory.map((msg, index) => (
+                            <Paper shadow="xs" radius="lg" p="md" withBorder>
+                                <div key={index}>{msg.sender} says {msg.text}</div>
+                            </Paper>
+                        ))}
                     </Group>
-                </Flex>
-            </Group>
+                    <Group position="center" spacing="sm">
+                        <Loader/>
+                    </Group>
+                </ScrollArea>
+
+
+            </AppShell>
+
         </>
     )
 
